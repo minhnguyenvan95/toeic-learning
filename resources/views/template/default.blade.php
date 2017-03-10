@@ -3,7 +3,7 @@
 <head>
 <title>@section('title')@show</title>
 <link href="{{ url('css/app.css') }}" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="{{ url('js/lib.js?v=1') }}"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript">
 	var API = "{{ url('/api/v1/') }}";
 </script>

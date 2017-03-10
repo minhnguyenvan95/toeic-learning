@@ -13,15 +13,41 @@ use Illuminate\Http\Request;
 |
 */
 
-
 Route::group(['prefix' => 'v1'], function (){
-	Route::group(['prefix' => 'user'], function (){
+	
+	Route::get('/require_login', ['as' => 'login', 'uses' => 'UserController@require_login']);
 
+	Route::group(['prefix' => 'user'], function (){	
 		Route::post('/create','UserController@create')->middleware('guest');
-		Route::post('/login', 'UserController@login');
-		Route::get('/require_login', ['as' => 'login', 'uses' => 'UserController@require_login']);
+		Route::post('/get_token', 'UserController@get_token');
 		Route::post('/update','UserController@update')->middleware('auth:api');
+		Route::group(['middleware' => 'admin'], function(){
+			Route::get('/all', 'UserController@getAll');
+			Route::get('/{id}', 'UserController@getonce')->where('id','[0-9]+');
+		});
 	});	
+
+	Route::group(['prefix' => 'questiontype'], function (){
+		Route::get('/all', 'QuestionTypeController@getAll');
+		Route::get('/{id}', 'QuestionTypeController@getOnce')->where('id','[0-9]+');
+		Route::group(['middleware' => 'admin'], function(){
+			Route::post('/create','QuestionTypeController@create');
+			Route::post('/update','QuestionTypeController@update');
+			Route::post('/delete','QuestionTypeController@delete');
+		});
+		
+	});	
+
+	Route::group(['prefix' => 'question'], function(){
+		Route::get('/all/{type}', 'QuestionController@getByType')->where('type','[0-9]+'); //Add filter ?
+		Route::get('/all', 'QuestionController@getAll');
+		Route::get('/{id}', 'QuestionController@getOnce')->where('id','[0-9]+');
+		Route::group(['middleware' => 'admin'], function(){
+			Route::post('/create','QuestionController@create');
+			Route::post('/update','QuestionController@update');
+			Route::post('/delete','QuestionController@delete');
+		});
+	});
 
 });
 

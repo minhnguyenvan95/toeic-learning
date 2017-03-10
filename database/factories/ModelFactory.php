@@ -20,6 +20,20 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?: $password = bcrypt('secret'),
         'remember_token' => str_random(10),
-        'balance' => $faker->randomNumber(3)
+        'balance' => $faker->randomNumber(3),
+        'api_token' => md5($faker->randomNumber(5)),
+    ];
+});
+
+
+$factory->define(App\Question::class, function (Faker\Generator $faker) {
+
+    return [
+    	'type' => $faker->numberBetween(1,7),
+    	'id_doanvan' => null,
+    	'content' => $faker->realText(),
+    	'answer' => json_encode([
+    		'Test1','Test2','Test3','Test4'
+    	   ),
     ];
 });

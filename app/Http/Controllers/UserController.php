@@ -9,14 +9,18 @@ use App\User;
 
 class UserController extends Controller
 {
-	public function index()
-	{
+	public function index(){
 		return view('register');
 	}
 
     public function getOnce($id){
-    	$user = User::where('id',$id)->first();
-    	return $user;
+    	$obj = User::where('id',$id)->first();
+    	return Helper::ApiResponse($obj, $obj?'success':'fail');
+    }
+
+    public function getAll(){
+        $objs = User::simplePaginate(10);
+        return Helper::ApiResponse($objs, $objs?'success':'fail');
     }
 
     public function create(Request $rq){
@@ -28,18 +32,18 @@ class UserController extends Controller
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => bcrypt($data['password']),
-                'remember_token' => str_random(10)
+                'remember_token' => str_random(10),
+                'api_token' => md5(str_random(10)),
                ]);
             if($t)
-                return $this->buildJSON($t);
-            return $this->buildJSON('Something went wrong','fail');
+                return Helper::ApiResponse($t);
+            return Helper::ApiResponse('Something went wrong','fail');
         }
 	    else
-	    	return $this->buildJSON($validator->messages()->first(),'fail');
+	    	return Helper::ApiResponse($validator->messages()->first(),'fail');
     }
 
-
-    public function login(Request $rq){
+    public function get_token(Request $rq){
         $data = $rq->all();
         $conds = [
             'email' => 'bail|required|email|max:50',
@@ -53,12 +57,12 @@ class UserController extends Controller
         ];
         if(!$validator->fails()){
             if(Auth::attempt($credentials)){
-                return $this->buildJSON(Auth::getUser());
+                return Helper::ApiResponse(Auth::getUser());
             }
-            return $this->buildJSON('Email or password is not match our records','fail');
+            return Helper::ApiResponse('Email or password is not match our records','fail');
         }
         else
-            return $this->buildJSON($validator->messages()->first(),'fail');        
+            return Helper::ApiResponse($validator->messages()->first(),'fail');        
     }
 
     public function update(Request $rq){
@@ -66,7 +70,7 @@ class UserController extends Controller
         $validator = $this->validator($data);
 
         if(!$validator->fails()){
-            return $this->buildJSON('Success','fail');
+            return Helper::ApiResponse('Success','fail');
             /*
             $t = User::create([
                 'name' => $data['name'],
@@ -76,27 +80,27 @@ class UserController extends Controller
                ]);*/
 /*
             if($t)
-                return $this->buildJSON($t);
-            return $this->buildJSON('Something went wrong','fail');*/
+                return Helper::ApiResponse($t);
+            return Helper::ApiResponse('Something went wrong','fail');*/
         }
         else
-            return $this->buildJSON($validator->messages()->first(),'fail');
-
+            return Helper::ApiResponse($validator->messages()->first(),'fail');
     }
 
     public function require_login(){
-        return $this->buildJSON('Not a valid api_token','fail');
+        return Helper::ApiResponse('Not a valid api_token','fail');
+    }
+
+    public function require_login_admin()
+    {
+        return Helper::ApiResponse('Only Admin can access','fail');
     }
 
     protected function validator(array $data){
         return Validator::make($data, [
             'name' => 'required|max:50',
-            'password' => 'bail|required|min:6|confirmed',
+            'password' => 'bail|required|min:6|max:50|confirmed',
             'email' => 'bail|required|email|max:50|unique:users',
         ]);
-    }
-
-    private function buildJSON($data,$status = 'success'){
-        return ['status' => $status, 'message' => $data];
     }
 }

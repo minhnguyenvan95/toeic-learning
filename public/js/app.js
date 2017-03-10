@@ -19,7 +19,7 @@ jQuery(document).ready(function(){
 		e.preventDefault();
 		var data = $(this).serialize();
 		
-		$.post(API + '/user/login', data, function(response){
+		$.post(API + '/user/get_token', data, function(response){
 			
 		}).fail(function(err){
 			alert('err');

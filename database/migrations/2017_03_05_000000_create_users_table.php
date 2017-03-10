@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->boolean('status')->default(true);
             $table->enum('type',['user','admin'])->default('user');
             $table->rememberToken();
-            $table->char('api_token', 60)->nullable();
+            $table->char('api_token', 60)->unique();;
             $table->timestamps();
         });
     }
