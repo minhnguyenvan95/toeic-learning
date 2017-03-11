@@ -7,5 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Question extends Model
 {
     //
-    protected $fillable = ['type','id_doanvan','content','answer'];
+    protected $fillable = ['question_type_id','id_doanvan','content','choice',];
+    public function answers()
+    {
+    	return $this->hasMany('App\Answer');
+    }
+
+    public function questiontype()
+    {
+    	return $this->belongsTo('App\QuestionType','question_type_id','id');
+    }
 }

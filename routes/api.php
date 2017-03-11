@@ -39,13 +39,24 @@ Route::group(['prefix' => 'v1'], function (){
 	});	
 
 	Route::group(['prefix' => 'question'], function(){
-		Route::get('/all/{type}', 'QuestionController@getByType')->where('type','[0-9]+'); //Add filter ?
+		Route::get('/type/{type}', 'QuestionController@getByType')->where('type','[0-9]+'); //Add filter ?
 		Route::get('/all', 'QuestionController@getAll');
 		Route::get('/{id}', 'QuestionController@getOnce')->where('id','[0-9]+');
 		Route::group(['middleware' => 'admin'], function(){
 			Route::post('/create','QuestionController@create');
 			Route::post('/update','QuestionController@update');
 			Route::post('/delete','QuestionController@delete');
+		});
+	});
+
+	Route::group(['prefix' => 'answer'], function(){
+		//Route::get('/type/{type}', 'AnswerController@getByType')->where('type','[0-9]+'); //Add filter ?
+		//Route::get('/all', 'AnswerController@getAll');
+		Route::get('/{id}', 'AnswerController@getOnce')->where('id','[0-9]+');
+		Route::group(['middleware' => 'admin'], function(){
+			Route::post('/create','AnswerController@create');
+			Route::post('/update','AnswerController@update');
+			Route::post('/delete','AnswerController@delete');
 		});
 	});
 

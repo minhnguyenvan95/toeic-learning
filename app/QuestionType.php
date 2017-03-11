@@ -8,4 +8,9 @@ class QuestionType extends Model
 {
     //
     protected $fillable = ['name', 'meta'];
+
+    public function questions()
+    {
+    	return $this->hasMany('App\Question');
+    }
 }

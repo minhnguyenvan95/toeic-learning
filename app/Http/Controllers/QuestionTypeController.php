@@ -16,7 +16,7 @@ class QuestionTypeController extends Controller
 
 	public function getAll(){
 		$objs = QuestionType::simplePaginate(15);
-        return Helper::ApiResponse($objs,$objs?'success','fail');
+        return Helper::ApiResponse($objs,$objs?'success':'fail');
 	}
 
 	public function create(Request $rq){

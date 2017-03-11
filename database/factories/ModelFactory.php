@@ -27,13 +27,18 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 
 
 $factory->define(App\Question::class, function (Faker\Generator $faker) {
-
     return [
-    	'type' => $faker->numberBetween(1,7),
+    	'question_type_id' => App\QuestionType::inRandomOrder()->first()->id,
     	'id_doanvan' => null,
     	'content' => $faker->realText(),
-    	'answer' => json_encode([
-    		'Test1','Test2','Test3','Test4'
-    	   ),
     ];
 });
+
+$factory->define(App\Answer::class, function (Faker\Generator $faker) {
+
+    return [
+        'question_id' => App\Question::inRandomOrder()->first()->id,
+        'content' => $faker->realText(),
+    ];
+});
+
