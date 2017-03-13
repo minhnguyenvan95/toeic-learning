@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'HomepageController@index');
 
 Route::get('/register', function(){
 	return View::make('register');
@@ -21,4 +19,11 @@ Route::get('/register', function(){
 
 Route::get('/login', function(){
 	return View::make('login');
-});
+})->middleware('guest');
+
+Route::get('/logout','HomepageController@logout');
+Route::post('/login', 'HomepageController@login');
+
+Route::get('dashboard','HomepageController@dashboard');
+Route::get('courses','HomepageController@courses');
+Route::get('posts','HomepageController@posts');

@@ -14,9 +14,10 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     static $password;
-
+    $rd_img = $faker->numberBetween(1,75);
     return [
         'name' => $faker->name,
+        'avatar' => '/avatar/128('.$rd_img.').jpg',
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?: $password = bcrypt('secret'),
         'remember_token' => str_random(10),
@@ -39,6 +40,14 @@ $factory->define(App\Answer::class, function (Faker\Generator $faker) {
     return [
         'question_id' => App\Question::inRandomOrder()->first()->id,
         'content' => $faker->realText(),
+    ];
+});
+
+$factory->define(App\Post::class, function (Faker\Generator $faker) {
+    return [
+        'title' => $faker->text(50),
+        'content' => $faker->realText,
+        
     ];
 });
 

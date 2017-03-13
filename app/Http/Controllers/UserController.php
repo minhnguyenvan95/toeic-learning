@@ -43,7 +43,7 @@ class UserController extends Controller
 	    	return Helper::ApiResponse($validator->messages()->first(),'fail');
     }
 
-    public function get_token(Request $rq){
+    public static function get_token(Request $rq){
         $data = $rq->all();
         $conds = [
             'email' => 'bail|required|email|max:50',

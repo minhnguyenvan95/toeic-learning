@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('email',50)->unique();
             $table->string('password');
             $table->string('name',50);
+            $table->string('avatar',255)->nullable();
             $table->decimal('balance')->default(0);
             $table->boolean('status')->default(true);
             $table->enum('type',['user','admin'])->default('user');
