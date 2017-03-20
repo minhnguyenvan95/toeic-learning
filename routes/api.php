@@ -60,6 +60,8 @@ Route::group(['prefix' => 'v1'], function (){
 		});
 	});
 
+	Route::get('/practice/{type}','PracticepageController@get_practice')->where('type','[0-9]+');
+
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

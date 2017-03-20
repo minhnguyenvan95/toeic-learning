@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDoanVansTable extends Migration
+class CreateQuestionsPackagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateDoanVansTable extends Migration
      */
     public function up()
     {
-        Schema::create('doan_vans', function (Blueprint $table) {
+        Schema::create('questions_packages', function (Blueprint $table) {
             $table->increments('id');
             $table->longtext('content');
+            $table->integer('question_type_id')->unsigned();
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ class CreateDoanVansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('doan_vans');
+        Schema::dropIfExists('questions_packages');
     }
 }

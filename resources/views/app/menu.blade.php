@@ -1,7 +1,7 @@
 <div class="primary-header">
 	<div class="container">
 		<a href="{{url('')}}" id="branding">
-			<img src="images/logo.png" alt="Lincoln high School">
+			<img src="{{url('images/logo.png')}}" alt="Lincoln high School">
 			<h1 class="site-title">Toeic Learning</h1>
 		</a> <!-- #branding -->
 		

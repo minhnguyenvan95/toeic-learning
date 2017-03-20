@@ -27,3 +27,6 @@ Route::post('/login', 'HomepageController@login');
 Route::get('dashboard','HomepageController@dashboard');
 Route::get('courses','HomepageController@courses');
 Route::get('posts','HomepageController@posts');
+
+Route::get('/practice', 'PracticepageController@index');
+Route::get('/practice/{id}', 'PracticepageController@practice')->where('id','[0-9]+');

@@ -24,7 +24,7 @@ class QuestionController extends Controller
 
         $validator = Validator::make($data, [
             'question_type_id' => 'required|numeric|exists:question_types,id',
-            'id_doanvan' => 'bail|nullable|numeric|exists:doan_vans,id',
+            'package_id' => 'bail|nullable|numeric|exists:questions_packages,id',
             'content' => 'required',
         ]);
 
@@ -44,7 +44,7 @@ class QuestionController extends Controller
         $validator = Validator::make($data, [
             'id' => 'required|numeric|exists:questions,id',
             'question_type_id' => 'numeric|exists:question_types,id',
-            'id_doanvan' => 'bail|nullable|numeric|exists:doan_vans,id', //TODO: CHECK WHEN TABLE DOANVAN CREATED
+            'package_id' => 'bail|nullable|numeric|exists:questions_packages,id', //TODO: CHECK WHEN TABLE DOANVAN CREATED
         ]);
 
         if(!$validator->fails()){
@@ -74,7 +74,7 @@ class QuestionController extends Controller
             return Helper::ApiResponse($validator->messages()->first(),'fail');
     }
 
-    public function getByType($type){
+    public static function getByType($type){
         $objs = Question::with('answers')->where('question_type_id',$type)->simplePaginate(20);
         return Helper::ApiResponse($objs,$objs?'success':'fail');
     }

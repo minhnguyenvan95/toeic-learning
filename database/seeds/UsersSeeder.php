@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class UsersTableSeeder extends Seeder
+class UsersSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -21,6 +21,6 @@ class UsersTableSeeder extends Seeder
         	'api_token' => 'e208bd1a6d3835f8a62e642f5693f9e3',
         	'type' => 'admin'
     	]);
-        factory(App\User::class,20)->create();
+        factory(App\User::class,10)->create();
     }
 }

@@ -11,6 +11,7 @@
 		<link href="{{ url('fonts/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
 		<!-- Loading main css file -->
 		<link rel="stylesheet" href="{{ url('style.css') }}">
+		<link rel="stylesheet" href="{{ url('wpProQuiz_front.min.css') }}">
 		
 		<!--[if lt IE 9]>
 		<script src="js/ie-support/html5.js"></script>
@@ -87,9 +88,9 @@
 		var DOMAIN = "{{url('')}}";
 		var API = "{{url('/api/v1/')}}";
 		</script>
-		<script src="js/jquery-1.11.1.min.js"></script>
-		<script src="js/plugins.js"></script>
-		<script src="js/app.js"></script>
+		<script src="{{url('js/jquery-1.11.1.min.js')}}"></script>
+		<script src="{{url('js/plugins.js')}}"></script>
+		<script src="{{url('js/app.js')}}"></script>
 		
 	</body>
 

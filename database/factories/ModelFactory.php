@@ -30,7 +30,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 $factory->define(App\Question::class, function (Faker\Generator $faker) {
     return [
     	'question_type_id' => App\QuestionType::inRandomOrder()->first()->id,
-    	'id_doanvan' => null,
+    	'package_id' => null,
     	'content' => $faker->realText(),
     ];
 });

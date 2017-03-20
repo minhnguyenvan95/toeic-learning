@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Question extends Model
 {
     //
-    protected $fillable = ['question_type_id','id_doanvan','content','choice',];
+    protected $fillable = ['question_type_id','package_id','content','choice',];
     public function answers()
     {
     	return $this->hasMany('App\Answer');

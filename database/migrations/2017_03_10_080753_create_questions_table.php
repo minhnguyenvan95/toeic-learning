@@ -16,7 +16,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('question_type_id')->unsigned();
-            $table->integer('id_doanvan')->nullable(); //default null, Kieu cau hoi la 7 thi day se tro thanh id cua doan van tham chieu
+            $table->integer('package_id')->nullable(); //default null, Kieu cau hoi la 7 thi day se tro thanh id cua doan van tham chieu
             $table->longtext('content');
             $table->timestamps();
 
