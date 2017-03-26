@@ -5,32 +5,71 @@ if(typeof(API) == "undefined")
 var isPackage = false;
 var questions_packages = [];
 var questions_arr = [];
-var answers = [];
+var answered = [];
+var timercounter;
+
+function addTimer(){
+	var minutesLabel = document.getElementById("minutes");
+    var secondsLabel = document.getElementById("seconds");
+    var totalSeconds = 0;
+    timercounter = setInterval(setTime, 1000);
+
+    function setTime()
+    {
+        ++totalSeconds;
+        secondsLabel.innerHTML = pad(totalSeconds%60);
+        minutesLabel.innerHTML = pad(parseInt(totalSeconds/60));
+    }
+
+    function pad(val)
+    {
+        var valString = val + "";
+        if(valString.length < 2)
+        {
+            return "0" + valString;
+        }
+        else
+        {
+            return valString;
+        }
+    }
+}
 
 function build_nav_questions_packages(){
 	var html = '';
+	html += '<label id="minutes">00</label>:<label id="seconds">00</label>';
 	html += '<div class="wpProQuiz_reviewDiv">';
 	html += '<div class="wpProQuiz_reviewQuestion" style="overflow-y:auto;max-height:150px!important">';
-	html += '<ol style="margin-top: 0px !important">';
+	html += '<ol id="question_nav_list" style="margin-top: 0px !important">';
 	var k=1;
 	for(i=0;i<questions_packages.length;i++){
 		for(j=0;j<questions_packages[i].questions.length;j++){
 			questions_packages[i].questions[j].question_number = k;
 			var q = questions_packages[i].questions[j];
-			html += '<li data-package="' + i + '"" data-question_id="' + q.id + '">' + k + '</li>';
-			k++;
+			var a = q.answers;
+			var answer_id = -1;
+			for(l=0;l<a.length;l++){
+				if(a[l].checked = 1){
+					answer_id = a[l].id;
+					break;
+				}
+			}
+
+			html += '<li data-package="' + i + '" data-question_id="' + q.id + '" data-answer_id="'+answer_id+'">' + k + '</li>';
+			k++;			
 		}
 	}
 	html += '</ol></div>';
-	html += '<div class="wpProQuiz_reviewLegend"> <ol> <li> <span class="wpProQuiz_reviewColor" style="background-color: #6CA54C;"></span> <span class="wpProQuiz_reviewText">Answered</span> </li> </ol> <div style="clear: both;"></div> </div>';
+	html += '<div class="wpProQuiz_reviewLegend"> <ol> <li> <span class="wpProQuiz_reviewColor" style="background-color: #6CA54C;"></span> <span class="wpProQuiz_reviewText">Answered</span> </li> <li> <span class="wpProQuiz_reviewColor" style="background-color: #e91e63;"></span> <span class="wpProQuiz_reviewText">Wrong</span> </li></ol> <div style="clear: both;"></div> </div>';
 	$('#question-nav').html(html);
 	build_questions_packages();
-	show_questions_packges(0);
+	show_questions_packges(0,"."+questions_packages[0].questions[0].id);
 
-	$('#question-nav li').click(function(){
+	$('#question_nav_list li').click(function(){
 		var data = $(this).data();
 		show_questions_packges(data.package,'.'+data.question_id);
 	});
+	addTimer();
 }
 
 function build_questions_packages(){
@@ -38,7 +77,7 @@ function build_questions_packages(){
 
 	for(k=0;k<questions_packages.length;k++){
 		var pkg = questions_packages[k];
-		html += '<div class="package_wrapper" id="' + k + '" style="display:none">';
+		html += '<div class="package-container" id="' + k + '" style="display:none">';
 		html += '<div class="package_content">' + pkg.content + '</div>';
 		
 		for(i=0;i<pkg.questions.length;i++){
@@ -48,7 +87,7 @@ function build_questions_packages(){
 			for(j=0;j<q.answers.length;j++){
 				var a = q.answers[j];
 				html += '<li class="wpProQuiz_questionListItem">'
-					+ '<label><input name="'+ q.id +'" class="answer wpProQuiz_questionInput" value="' + a.id + '" type="radio"/>'
+					+ '<label data-answer_id="'+a.id+'"><input data-pkg="' + i + '" name="'+ q.id +'" class="answer wpProQuiz_questionInput" value="' + a.id + '" type="radio"/>'
 					+ a.content
 					+ '.</label>'
 					+ '</li>';
@@ -61,26 +100,207 @@ function build_questions_packages(){
 
 	$("#question-wrapper").html(html);
 	$('input.answer').click(function(){
+		var pkg = $(this).data('pkg');
 		var question_id = $(this).attr('name');
-		$('#question-nav li[data-question_id='+question_id+']').css('background-color','#6CA54C');
+		var answer = $(this).attr('value');
+
+		var data = {question_id : question_id, answer_id: answer};
+		var flag = false;
+
+		//Add too answered array
+		for(i=0;i<answered.length;i++){
+			if(answered[i].question_id == question_id){
+				answered[i] = data;
+				flag = true;
+				break;
+			}
+		}
+		if(flag == false)
+			answered.push(data);
+
+		$('#question_nav_list li').removeClass('selected');
+		$('#question_nav_list li[data-question_id='+question_id+']').addClass('answered selected');
 
 		if($('.show input.answer:checked').length >= $('.show .wpProQuiz_question_text').length){
-			var pkg_id = $('.show.package_wrapper').attr('id');
+			var pkg_id = $('.show.package-container').attr('id');
 			var next_pkg = parseInt(pkg_id) + 1;
-			//if(next_pkg < questions_packages.length - 1)
-			show_questions_packges(next_pkg,'#'+next_pkg);
+			if(next_pkg < questions_packages.length){
+				var package_answers = $('#question_nav_list li[data-package='+next_pkg+']');
+				for(i=0;i<package_answers.length;i++){
+					if($(package_answers[i]).hasClass('answered') == false){
+						show_questions_packges(next_pkg,'.'+questions_packages[next_pkg].questions[0].id);
+						return;
+					}
+				}
+			}
+
+			var question_nav = $('#question_nav_list li');
+			for(i=0;i<question_nav.length;i++){
+				var q = question_nav[i];
+				if($(q).hasClass('answered') == false){
+					show_questions_packges($(q).data('package'), '.'+$(q).data('question_id'));
+					return;
+				}
+			}
+			//No more question 
+			tinhdiem_packages();
 		}
 	})
 }
 
-function show_questions_packges(id,scrollId){
-	$('.package_wrapper').removeClass('show').hide();
-	$('#'+id).addClass('show').fadeIn();
-	if(scrollId != null){
-		$('html, body').animate({scrollTop: $(scrollId).offset().top - 30}, 800);
+function tinhdiem_packages(){
+	clearInterval(timercounter);
+	$('#question_nav_list li').removeClass('selected');
+
+	for(i=0;i<answered.length;i++){
+		var answer = answered[i];
+		var right_answer = $('#question_nav_list li[data-question_id='+answer.question_id+']').data();
+		if(answer.answer_id != right_answer.answer_id){
+			$('#question_nav_list li[data-question_id='+answer.question_id+']').addClass('wrong');
+			$('#question-wrapper li label[data-answer_id='+ right_answer.answer_id+']').addClass('wrong');
+		}
 	}
 }
 
+function show_questions_packges(id,scrollId){
+	$('.package-container, .question-container').removeClass('show').hide();
+	$('#'+id).addClass('show').fadeIn();
+	var current_audio = $('#'+id+' audio');
+	if(current_audio.length > 0){
+		current_audio.addClass('playid_'+id);
+	
+		var list_audios = $('audio');
+		for(i=0;i<list_audios.length;i++){
+			var a = list_audios[i];
+			var flag = $(a).hasClass('playid_'+id);
+
+			if(a.paused == false && flag == false){
+				a.pause();
+				a.currentTime = 0;
+			}
+			else if(flag == true){
+
+			}
+		}
+
+		if(a.paused == true){
+			current_audio[0].load();
+			current_audio[0].play();
+		}
+	}
+	$('#question_nav_list li').removeClass('selected');
+	if(scrollId != null){
+		var question_id = scrollId.replace('.','').replace('#','');
+		$('#question_nav_list li[data-question_id='+question_id+']').addClass("selected");
+		
+		if(isPackage)
+			$('html, body').animate({scrollTop: $(scrollId).offset().top - 30}, 800);
+	}
+}
+
+function build_nav_questions(){
+	var html = '';
+	html += '<label id="minutes">00</label>:<label id="seconds">00</label>';
+	html += '<div class="wpProQuiz_reviewDiv">';
+	html += '<div class="wpProQuiz_reviewQuestion" style="overflow-y:auto;max-height:150px!important">';
+	html += '<ol id="question_nav_list" style="margin-top: 0px !important">';
+	
+	for(j=0;j<questions_arr.length;j++){
+		var q = questions_arr[j];
+		var a = q.answers;
+		var answer_id = -1;
+		for(l=0;l<a.length;l++){
+			if(a[l].checked = 1){
+				answer_id = a[l].id;
+				break;
+			}
+		}
+		html += '<li data-package="' + j + '" data-question_id="' + q.id + '" data-answer_id="'+answer_id+'">' + (j+1) + '</li>';
+	}
+	
+	html += '</ol></div>';
+	html += '<div class="wpProQuiz_reviewLegend"> <ol> <li> <span class="wpProQuiz_reviewColor" style="background-color: #6CA54C;"></span> <span class="wpProQuiz_reviewText">Answered</span> </li> <li> <span class="wpProQuiz_reviewColor" style="background-color: #e91e63;"></span> <span class="wpProQuiz_reviewText">Wrong</span> </li></ol> <div style="clear: both;"></div> </div>';
+	$('#question-nav').html(html);
+	build_questions_arr();
+	show_questions_packges(0,"."+questions_arr[0].id);
+
+	$('#question_nav_list li').click(function(){
+		var data = $(this).data();
+		show_questions_packges(data.package,'.'+data.question_id);
+	});
+	addTimer();
+}
+
+function build_questions_arr(){
+	var html = '';
+	
+	for(i=0;i<questions_arr.length;i++){
+		var q = questions_arr[i];
+		html += '<div class="question-container" id="' + i + '" style="display:none">';
+		html += '<div class="wpProQuiz_question_text '+q.id+'"><b>' + (i+1) +'. ' + q.content + '</b></div>';
+		html += '<ul class="wpProQuiz_questionList">';
+		for(j=0;j<q.answers.length;j++){
+			var a = q.answers[j];
+			html += '<li class="wpProQuiz_questionListItem">'
+				+ '<label data-answer_id="'+a.id+'"><input data-pkg="' + i + '" name="'+ q.id +'" class="answer wpProQuiz_questionInput" value="' + a.id + '" type="radio"/>'
+				+ a.content
+				+ '.</label>'
+				+ '</li>';
+			
+		}
+		html += '</ul>';
+		html += '</div>';
+	}
+
+	$("#question-wrapper").html(html);
+	$('input.answer').click(function(){
+		var pkg = $(this).data('pkg');
+		var question_id = $(this).attr('name');
+		var answer = $(this).attr('value');
+
+		var data = {question_id : question_id, answer_id: answer};
+		var flag = false;
+
+		//Add too answered array
+		for(i=0;i<answered.length;i++){
+			if(answered[i].question_id == question_id){
+				answered[i] = data;
+				flag = true;
+				break;
+			}
+		}
+		if(flag == false)
+			answered.push(data);
+
+		$('#question_nav_list li').removeClass('selected');
+		$('#question_nav_list li[data-question_id='+question_id+']').addClass('answered selected');
+
+		if($('.show input.answer:checked').length >= $('.show .wpProQuiz_question_text').length){
+			var pkg_id = $('.show.package-container').attr('id');
+			var next_pkg = parseInt(pkg_id) + 1;
+			if(next_pkg < questions_arr.length){
+				var package_answers = $('#question_nav_list li[data-package='+next_pkg+']');
+				for(i=0;i<package_answers.length;i++){
+					if($(package_answers[i]).hasClass('answered') == false){
+						show_questions_packges(next_pkg,'.'+questions_arr[0].id);
+						return;
+					}
+				}
+			}
+
+			var question_nav = $('#question_nav_list li');
+			for(i=0;i<question_nav.length;i++){
+				var q = question_nav[i];
+				if($(q).hasClass('answered') == false){
+					show_questions_packges($(q).data('package'), '.'+$(q).data('question_id'));
+					return;
+				}
+			}
+			//No more question 
+			tinhdiem_packages();
+		}
+	})
+}
 
 $(document).ready(function(){
 	if($("#question-wrapper").length){
@@ -94,6 +314,7 @@ $(document).ready(function(){
 					//show_question_packges();
 				}else{
 					questions_arr = data.message;
+					build_nav_questions();
 				}
 			}
 		});

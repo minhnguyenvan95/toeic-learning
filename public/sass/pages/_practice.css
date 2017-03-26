@@ -1,0 +1,15 @@
+#question_nav_list .selected{
+	background: #00bcd4!important;
+}
+#question_nav_list .answered{
+	background: #6CA54C;
+}
+#question_nav_list .wrong{
+	background: #e91e63!important;
+}
+#question-wrapper li label.wrong{
+	color: #e91e63!important;
+}
+.wpProQuiz_question_text img{
+	display: block;
+}

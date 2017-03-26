@@ -90,7 +90,7 @@
 		</script>
 		<script src="{{url('js/jquery-1.11.1.min.js')}}"></script>
 		<script src="{{url('js/plugins.js')}}"></script>
-		<script src="{{url('js/app.js')}}"></script>
+		<script src="{{url('js/app.js?v=2')}}"></script>
 		
 	</body>
 
