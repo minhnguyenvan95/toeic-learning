@@ -9,18 +9,10 @@
       <div class="col-md-8 col-md-offset-2">
         <div class="boxed-section">
         <div id="question-nav"></div>
-        <div id="question-wrapper" data-type="{{$type}}"></div>
-        @if( isset($isPackage) )
-          {{ count($data) }}
-          @foreach($data as $package)
+        <div id="question-wrapper" data-type="{{$type}}">
+          <h2>Please wait .... <img src="{{url('images/ajax-loader.gif')}}"/></h2>          
+        </div>
 
-          {!!html_entity_decode($package->content)!!}
-
-          
-          @endforeach
-        @else 
-
-        @endif
       </div>
       </div>
     </div>

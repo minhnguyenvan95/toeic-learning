@@ -27,6 +27,7 @@
               <input type="submit" class="button fix-position" value="Login">
             </div>
           </div>
+          <center><img style="display:none" class="ajax-loader" src="{{url('images/ajax-loader.gif')}}"/></center>
           <div class="status"></div>
           </form>
       </div>

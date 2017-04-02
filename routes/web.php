@@ -30,3 +30,13 @@ Route::get('posts','HomepageController@posts');
 
 Route::get('/practice', 'PracticepageController@index');
 Route::get('/practice/{id}', 'PracticepageController@practice')->where('id','[0-9]+');
+
+Route::get('acp','AdminPageController@login');
+Route::group(['prefix' => 'acp','middleware' => 'admin'],function(){
+	Route::get('/logout','AdminPageController@logout');
+	Route::get('dashboard','AdminPageController@dashboard');
+	Route::get('question_packages','AdminPageController@question_packages');
+	Route::get('question_types','AdminPageController@question_types');
+	Route::get('questions','AdminPageController@questions');
+	Route::get('users','AdminPageController@users');
+});

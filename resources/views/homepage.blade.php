@@ -52,7 +52,7 @@
 
 				</ul>
 				<p class="text-center">
-					<a href="#" class="more button secondary">See more Courses</a>
+					<a href="{{url('courses')}}" class="more button secondary">See more Courses</a>
 				</p>
 			</div>
 			<div class="col-md-4">
@@ -116,6 +116,7 @@
 								<input type="submit" class="button" value="Submit request">
 							</div>
 						</div>
+						<center><img style="display:none" class="ajax-loader" src="{{url('images/ajax-loader.gif')}}"/></center>
 						<div class="status"></div>
 					</form>
 				</div> <!-- .boxed-section .request-form -->

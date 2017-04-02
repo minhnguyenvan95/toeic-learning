@@ -18,6 +18,11 @@ class Admin
         if(Auth::guard('api')->check() && Auth::guard('api')->user()->isAdmin()){
             return $next($request);
         }
+
+        if(Auth::check() && Auth::user()->isAdmin()){
+            return $next($request);
+        }
+
         return response()->json(['status' => 'fail', 'message' => 'Only admin can access this.']);
     }
 }

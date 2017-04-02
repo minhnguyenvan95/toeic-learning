@@ -34,16 +34,20 @@ class HomepageController extends Controller
 
     public function dashboard()
     {
-        return view('dashboard',[]);
+        $u = Auth::user();
+        return view('dashboard',['user' => $u]);
     }
 
     public function courses(Request $rq)
     {
-         return view('courses',[]);
+        $question_type = \App\QuestionType::all();
+        return view('courses',['question_type' => $question_type]);
     }
 
     public function posts()
     {
-        # code...
+        $posts = \App\Post::limit(4)->get();
+        $first = $posts->first();
+        return view('post',['posts' => $posts,'first' => $first]);
     }
 }

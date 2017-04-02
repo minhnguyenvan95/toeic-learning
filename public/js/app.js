@@ -306,7 +306,7 @@ $(document).ready(function(){
 	if($("#question-wrapper").length){
 		var type = $("#question-wrapper").data('type');
 		$.get(API + '/practice/'+type,function(data){
-			if(data.status == 'success'){
+			if(data.status == 'success' && data.message.length > 0){
 				isPackage = data.isPackage;
 				if(isPackage){
 					questions_packages = data.message;
@@ -317,16 +317,22 @@ $(document).ready(function(){
 					build_nav_questions();
 				}
 			}
+
+			if(data.message.length == 0){
+				alert("We don't have any question for this type")
+			}
 		});
 	}
 
 	$('#register-form').submit(function(e){
 		e.preventDefault();
+		$('#register-form .ajax-loader').fadeIn();
 		var data = $(this).serialize();
 		$('#register-form .status').removeClass('fail').text('');
 		$('#register-form input').attr("disabled", true);
 		
 		$.post(API + '/user/create', data, function(response){
+			$('#register-form .ajax-loader').fadeOut();
 			if(response.status == 'fail'){
 				$('.status').addClass('fail').text(response.message);
 				$('#register-form input').attr("disabled", false);
@@ -336,29 +342,52 @@ $(document).ready(function(){
 			}
 			
 		}).fail(function(err){
+			$('#register-form .ajax-loader').fadeOut();
 			$('.status').addClass('fail').text(err);
 			$('#register-form input').attr("disabled", false);
 		})
 	});
 
+	$('#dashboard-form').submit(function(e){
+		e.preventDefault();
+		$('#dashboard-form .ajax-loader').fadeIn();
+		var data = $(this).serialize();
+		$('#dashboard-form .status').removeClass('fail').text('');
+		$('#dashboard-form input').attr("disabled", true);
+		
+		$.post(API + '/user/update', data, function(response){
+			$('#dashboard-form .ajax-loader').fadeOut();
+			$('.status').text(response.message);
+			$('#dashboard-form input').attr("disabled", false);
+			
+		}).fail(function(err){
+			$('#dashboard-form .ajax-loader').fadeOut();
+			$('.status').addClass('fail').text(err);
+			$('#dashboard-form input').attr("disabled", false);
+		})
+	});
+
 	$('#login-form').submit(function(e){
 		e.preventDefault();
+		$('#login-form .ajax-loader').fadeIn();
 		var data = $(this).serialize();
-		$('#register-form .status').removeClass('fail').text('');
-		$('#register-form input').attr("disabled", true);
+		$('#login-form .status').removeClass('fail').text('');
+		$('#login-form input').attr("disabled", true);
 		
 		$.post(DOMAIN + '/login', data, function(response){
+			$('#login-form .ajax-loader').fadeOut();
 			if(response.status == 'fail'){
 				$('.status').addClass('fail').text(response.message);
-				$('#register-form input').attr("disabled", false);
+				$('#login-form input').attr("disabled", false);
 			}else{
 				$('.status').text('Login success.');
 				window.location = DOMAIN + '/dashboard';
 			}
 			
 		}).fail(function(err){
+			$('#login-form .ajax-loader').fadeOut();
 			$('.status').addClass('fail').text(err);
-			$('#register-form input').attr("disabled", false);
+			$('#login-form input').attr("disabled", false);
 		})
 	});
 })

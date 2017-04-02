@@ -67,21 +67,27 @@ class UserController extends Controller
 
     public function update(Request $rq){
         $data = $rq->all();
-        $validator = $this->validator($data);
+        
+        $conds = [
+            'email' => 'bail|required|email|max:50',
+            'name' => 'required|max:50',
+            'password' => $data["password"] != ""?'min:6|confirmed':'',
+        ];
+
+        $validator = Validator::make($data,$conds);
 
         if(!$validator->fails()){
-            return Helper::ApiResponse('Success','fail');
-            /*
-            $t = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => bcrypt($data['password']),
-                'remember_token' => str_random(10)
-               ]);*/
-/*
-            if($t)
-                return Helper::ApiResponse($t);
-            return Helper::ApiResponse('Something went wrong','fail');*/
+            $u = Auth::user();
+            if($u){
+                $u->email = $data['email'];
+                $u->name = $data['name'];
+                if($data['password'] != "")
+                    $u->password = bcrypt($data['password']);
+
+                $u->save();
+                return Helper::ApiResponse('Success','success');
+            }
+            return Helper::ApiResponse('Something went wrong','fail');
         }
         else
             return Helper::ApiResponse($validator->messages()->first(),'fail');

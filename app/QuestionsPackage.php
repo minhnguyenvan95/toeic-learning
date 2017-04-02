@@ -13,4 +13,9 @@ class QuestionsPackage extends Model
     {
     	return $this->hasMany('App\Question','package_id','id');
     }
+
+    public function question_type()
+    {
+    	return $this->belongsTo('App\QuestionType','question_type_id','id');
+    }
 }
