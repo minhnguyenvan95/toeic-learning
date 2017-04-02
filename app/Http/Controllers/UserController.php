@@ -9,6 +9,15 @@ use App\User;
 
 class UserController extends Controller
 {
+    public function check_token(Request $rq)
+    {
+        if(Auth::guard('api')->check()){
+            $obj = Auth::guard('api')->user();
+            return Helper::ApiResponse($obj, $obj?'success':'fail');
+        }
+        return Helper::ApiResponse('api_token is expired.','fail');
+    }
+
 	public function index(){
 		return view('register');
 	}

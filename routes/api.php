@@ -17,7 +17,8 @@ Route::group(['prefix' => 'v1'], function (){
 	
 	Route::get('/require_login', ['as' => 'login', 'uses' => 'UserController@require_login']);
 
-	Route::group(['prefix' => 'user'], function (){	
+	Route::group(['prefix' => 'user'], function (){
+		Route::post('/','UserController@check_token');
 		Route::post('/create','UserController@create')->middleware('guest');
 		Route::post('/get_token', 'UserController@get_token');
 		Route::post('/update','UserController@update')->middleware('auth:api');
